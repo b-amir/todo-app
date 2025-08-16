@@ -1,4 +1,3 @@
-import React from "react";
 import RootLayout from "@/src/app/layout";
 import { Button } from "@/src/shared/components/ui/button";
 import { TodoList } from "@/src/features/todo/components/list";
