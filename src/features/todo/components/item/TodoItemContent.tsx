@@ -7,22 +7,35 @@ interface TodoItemContentProps {
   todo: Todo;
   isEditing: boolean;
   onCancel: () => void;
+  onToggle: () => void;
 }
 
 export function TodoItemContent({
   todo,
   isEditing,
   onCancel,
+  onToggle,
 }: TodoItemContentProps) {
   return (
     <div className="flex-1 min-w-0 relative">
       {isEditing ? (
         <EditTodoForm todo={todo} onCancel={onCancel} />
       ) : (
-        <div className="relative">
+        <div
+          className="relative inline-block"
+          onClick={onToggle}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onToggle();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+        >
           <span
             className={cn(
-              "text-base font-medium break-words transition-all duration-200 handwritten ",
+              "text-base font-medium break-words transition-all duration-200 handwritten cursor-pointer",
               "leading-relaxed",
               todo.completed ? "text-black/60 line-through" : "text-ink-800"
             )}

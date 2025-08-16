@@ -95,6 +95,7 @@ export const TodoItem = memo(function TodoItem({ todo }: TodoItemProps) {
           "flex items-center gap-3 px-4 todo-line-height",
           "transition-all duration-200 ease-out",
           "border-b border-dashed  border-neutral-400/50",
+          "cursor-default",
           isEditing
             ? "bg-[var(--item-focus)] shadow-xs border-neutral-400"
             : "hover:bg-[var(--item-unselected)]"
@@ -109,6 +110,7 @@ export const TodoItem = memo(function TodoItem({ todo }: TodoItemProps) {
           todo={todo}
           isEditing={isEditing}
           onCancel={() => setIsEditing(false)}
+          onToggle={handleToggleComplete}
         />
         {!isEditing && (
           <TodoItemActions

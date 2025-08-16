@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from "@/src/features/todo/hooks";
-import { useCallback, useRef } from "react";
+import { useCallback, useState } from "react";
 import { reorderTodos } from "@/src/features/todo/store/todoSlice";
 import { Reorder, AnimatePresence } from "framer-motion";
 import type { Todo } from "@/src/features/todo/api";
@@ -15,7 +15,7 @@ interface TodoListProps {
 export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
   const dispatch = useAppDispatch();
   const { todos } = useAppSelector((state) => state.todos);
-  const reorderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isReordered, setIsReordered] = useState(false);
 
   const filteredTodos = todos;
 
@@ -40,22 +40,21 @@ export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
               toIndex: newIndex,
             })
           );
-
-          if (reorderTimeoutRef.current) {
-            clearTimeout(reorderTimeoutRef.current);
-          }
-
-          reorderTimeoutRef.current = setTimeout(() => {
-            toast.success("Task reordered successfully!", {
-              description: "Your list has been updated with the new order.",
-            });
-            reorderTimeoutRef.current = null;
-          }, 500);
+          setIsReordered(true);
         }
       }
     },
     [todos, dispatch]
   );
+
+  const handleDragEnd = () => {
+    if (isReordered) {
+      toast.success("Task reordered successfully!", {
+        description: "Your list has been updated with the new order.",
+      });
+      setIsReordered(false);
+    }
+  };
 
   if (filteredTodos.length === 0) {
     return (
@@ -76,11 +75,6 @@ export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
         axis="y"
         values={filteredTodos}
         onReorder={handleReorder}
-        onDragEnd={() => {
-          if (reorderTimeoutRef.current) {
-            clearTimeout(reorderTimeoutRef.current);
-          }
-        }}
         className="flex flex-col gap-0 w-full mb-0"
       >
         <AnimatePresence>
@@ -93,6 +87,7 @@ export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
+              onDragEnd={handleDragEnd}
             >
               <TodoItem todo={todo} />
             </Reorder.Item>
