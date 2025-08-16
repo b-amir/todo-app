@@ -2,14 +2,23 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { fetchTodos, createTodo, updateTodo, deleteTodo } from "./todoApi";
 import type { CreateTodoRequest, UpdateTodoRequest } from "./types";
 import "@testing-library/jest-dom";
-import apiClient from "@/src/shared/utils/apiClient";
 
 // Mock the apiClient
-vi.mock("./apiClient", () => ({
+vi.mock("@/src/shared/utils/apiClient", () => ({
   default: vi.fn(),
+  ApiError: class ApiError extends Error {
+    public status: number;
+    constructor(message: string, status: number) {
+      super(message);
+      this.name = "ApiError";
+      this.status = status;
+    }
+  },
 }));
 
-const mockApiClient = vi.mocked(apiClient);
+const mockApiClient = vi.mocked(
+  await import("@/src/shared/utils/apiClient")
+).default;
 
 describe("todoApi", () => {
   beforeEach(() => {

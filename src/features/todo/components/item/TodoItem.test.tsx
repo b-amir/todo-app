@@ -52,6 +52,17 @@ vi.mock("framer-motion", () => ({
       value: { id: number };
     }) => <div data-testid={`reorder-item-${value.id}`}>{children}</div>,
   },
+  useDragControls: () => ({}),
+  useMotionValue: () => ({ get: () => 0, set: vi.fn() }),
+  useTransform: () => ({ get: () => 1, set: vi.fn() }),
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+  motion: {
+    div: ({ children, ...props }: React.ComponentProps<"div">) => (
+      <div {...props}>{children}</div>
+    ),
+  },
 }));
 
 // Mock the TodoItemContent component
