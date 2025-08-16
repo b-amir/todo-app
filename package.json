@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "latest",
+    "@tanstack/react-query": "latest",
+    "@tanstack/react-query-devtools": "latest",
+    "class-variance-authority": "^0.7.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "clsx": "^2.1.1",
