@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@reduxjs/toolkit": "latest",
     "@tanstack/react-query": "latest",
     "@tanstack/react-query-devtools": "latest",
@@ -17,7 +18,8 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^2.5.5"
+    "tailwind-merge": "^2.5.5",
+    "zod": "3.25.67"
   },
   "devDependencies": {
     "@tailwindcss/vite": "latest",
