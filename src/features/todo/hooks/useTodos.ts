@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTodosState } from "./useTodosState";
 import { useTodosQuery } from "./useTodosQuery";
 import { useTodosSync } from "./useTodosSync";
 import { useTodosActions } from "./useTodosActions";
+import { useAppSelector } from "@/src/features/todo/hooks";
 
 export function useTodos() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const { lastFetchedPage } = useAppSelector((state) => state.todos);
+  const [currentPage, setCurrentPage] = useState(lastFetchedPage || 1);
+
+  useEffect(() => {
+    if (lastFetchedPage && lastFetchedPage > currentPage) {
+      setCurrentPage(lastFetchedPage);
+    }
+  }, [lastFetchedPage, currentPage]);
+
   const {
     todos,
     hasMoreTodos,
