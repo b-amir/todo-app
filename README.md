@@ -139,6 +139,29 @@ graph TD
     class C storageNode
 ```
 
+#### **Decision**: Search and Filtering Implementation Strategy
+
+**Context**: The project requirements suggest implementing search and filtering as bonus features. However, the chosen approach of using paginated API with infinite scrolling presents significant limitations for implementing these features effectively.
+
+**Options Considered**:
+
+1. Implement search/filtering on fetched items only (limited scope)
+2. Modify the API to support search/filtering (not allowed per requirements)
+3. Prioritize core functionality and user experience over incomplete features
+
+**Decision**: Strategically chose to prioritize core functionality and smooth user experience over implementing search and filtering features that would not meet user expectations.
+
+**Rationale**:
+
+- **API Limitations**: The DummyJSON API only provides paginated endpoints without search or filtering capabilities. Modifying the API is not an option as per project constraints.
+- **User Experience Standards**: Implementing search only on fetched items (current page) would violate user expectations, as users expect to search through their entire todo collection, not just the currently loaded subset.
+- **Architectural Integrity**: A proper search implementation would require either:
+  - Storing all todos in localStorage (defeating the purpose of pagination)
+  - Making multiple API calls to fetch all data for search
+- **Strategic Focus**: Instead, the project delivers exceptional user experience through infinite scrolling, optimistic updates, drag-and-drop functionality, and robust state management - features that work seamlessly with the chosen architecture.
+
+This decision aligns with the principle of building features that provide genuine value to users rather than implementing functionality that would create a suboptimal experience.
+
 ## Project Structure
 
 ```
