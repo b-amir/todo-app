@@ -7,3 +7,4 @@ export * from "./DialogTitle";
 export * from "./DialogDescription";
 export * from "./DialogClose";
 export * from "./context";
+export * from "./Portal";

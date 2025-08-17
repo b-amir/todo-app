@@ -19,7 +19,7 @@ export interface TodoState {
   localDiffs: {
     created: Todo[];
     updated: Todo[];
-    deleted: number[];
+    deleted: string[];
     reorderedCount?: number;
   };
 }

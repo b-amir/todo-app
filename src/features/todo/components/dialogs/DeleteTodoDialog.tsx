@@ -29,7 +29,12 @@ export const DeleteTodoDialog: React.FC<DeleteTodoDialogProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <DeleteTodoButton onClick={(e) => e.stopPropagation()} />
+        <DeleteTodoButton
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+        />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
