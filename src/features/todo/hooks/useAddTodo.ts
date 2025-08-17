@@ -23,11 +23,11 @@ export function useAddTodo(reset: UseFormReset<AddTodoFormInputs>) {
     Todo,
     ApiError,
     CreateTodoRequest,
-    { previousTodos: Todo[]; tempId: number } | undefined
+    { previousTodos: Todo[]; tempId: string } | undefined
   >({
     mutationFn: (newTodo: CreateTodoRequest) => createTodo(newTodo),
     onMutate: async (newTodo) => {
-      const tempId = Date.now();
+      const tempId = Date.now().toString();
       const tempTodo = { ...newTodo, id: tempId, _tempId: tempId };
 
       const previousTodos = todos;

@@ -90,7 +90,7 @@ export const reducers = {
   },
   updateTodo: (
     state: TodoState,
-    action: PayloadAction<{ id: number; updates: Partial<Todo> }>
+    action: PayloadAction<{ id: string; updates: Partial<Todo> }>
   ) => {
     const { id, updates } = action.payload;
     const todoIndex = state.todos.findIndex((todo) => todo.id === id);
@@ -102,7 +102,7 @@ export const reducers = {
       saveToLocalStorage(state);
     }
   },
-  deleteTodo: (state: TodoState, action: PayloadAction<number>) => {
+  deleteTodo: (state: TodoState, action: PayloadAction<string>) => {
     const todoId = action.payload;
     const todoIndex = state.todos.findIndex((todo) => todo.id === todoId);
 
@@ -147,7 +147,7 @@ export const reducers = {
   },
   replaceTodo: (
     state: TodoState,
-    action: PayloadAction<{ tempId: number; newTodo: Todo }>
+    action: PayloadAction<{ tempId: string; newTodo: Todo }>
   ) => {
     const { tempId, newTodo } = action.payload;
     const index = state.todos.findIndex((todo) => todo.id === tempId);

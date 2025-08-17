@@ -1,10 +1,9 @@
-
 export interface Todo {
-  id: number;
+  id: string;
   todo: string;
   completed: boolean;
   userId: number;
-  _tempId?: number;
+  _tempId?: string;
 }
 
 export interface TodosResponse {
@@ -21,7 +20,7 @@ export interface CreateTodoRequest {
 }
 
 export interface UpdateTodoRequest {
-  id: number;
+  id: string;
   todo?: string;
   completed?: boolean;
 }
