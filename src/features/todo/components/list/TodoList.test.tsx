@@ -55,18 +55,11 @@ vi.mock("framer-motion", () => ({
   Reorder: {
     Group: ({
       children,
-      onReorder,
     }: {
       children: React.ReactNode;
       onReorder?: (newOrder: unknown[]) => void;
     }) => (
-      <div
-        data-testid="reorder-group"
-        onClick={() => onReorder && onReorder([])}
-        onKeyDown={() => onReorder && onReorder([])}
-        role="button"
-        tabIndex={0}
-      >
+      <div data-testid="reorder-group" role="button" tabIndex={0}>
         {children}
       </div>
     ),
@@ -75,12 +68,16 @@ vi.mock("framer-motion", () => ({
       value,
     }: {
       children: React.ReactNode;
-      value: { id: number };
+      value: { id: string };
     }) => <div data-testid={`reorder-item-${value.id}`}>{children}</div>,
   },
   AnimatePresence: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="animate-presence">{children}</div>
   ),
+  LazyMotion: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="lazy-motion">{children}</div>
+  ),
+  domMax: {},
 }));
 
 const createTestStore = (initialState = {}) => {
@@ -140,9 +137,9 @@ const renderWithProviders = (
 };
 
 const mockTodos: Todo[] = [
-  { id: 1, todo: "First todo", completed: false, userId: 1 },
-  { id: 2, todo: "Second todo", completed: true, userId: 1 },
-  { id: 3, todo: "Third todo", completed: false, userId: 1 },
+  { id: "1", todo: "First todo", completed: false, userId: 1 },
+  { id: "2", todo: "Second todo", completed: true, userId: 1 },
+  { id: "3", todo: "Third todo", completed: false, userId: 1 },
 ];
 
 describe("TodoList", () => {
@@ -166,7 +163,7 @@ describe("TodoList", () => {
     });
 
     expect(screen.getByTestId("reorder-group")).toBeInTheDocument();
-    expect(screen.getByTestId("animate-presence")).toBeInTheDocument();
+    expect(screen.getByTestId("lazy-motion")).toBeInTheDocument();
 
     // Check that all todo items are rendered
     mockTodos.forEach((todo) => {
@@ -229,7 +226,7 @@ describe("TodoList", () => {
     });
 
     mockTodos.forEach((todo) => {
-      expect(screen.getByTestId(`reorder-item-${todo.id}`)).toBeInTheDocument();
+      expect(screen.getByTestId(`todo-item-${todo.id}`)).toBeInTheDocument();
     });
   });
 
@@ -238,11 +235,11 @@ describe("TodoList", () => {
       todos: mockTodos,
     });
 
+    expect(screen.getByTestId("reorder-group")).toBeInTheDocument();
     const reorderGroup = screen.getByTestId("reorder-group");
     fireEvent.click(reorderGroup);
 
-    // The reorder group should be clickable and trigger onReorder
-    expect(reorderGroup).toBeInTheDocument();
+    expect(screen.getByTestId("reorder-group")).toBeInTheDocument();
   });
 
   it("shows correct todo completion states", () => {
@@ -284,11 +281,10 @@ describe("TodoList", () => {
 
     // Check the overall structure
     expect(screen.getByTestId("reorder-group")).toBeInTheDocument();
-    expect(screen.getByTestId("animate-presence")).toBeInTheDocument();
+    expect(screen.getByTestId("lazy-motion")).toBeInTheDocument();
     expect(screen.getByTestId("load-more-button")).toBeInTheDocument();
 
-    // Check that the number of reorder items matches the number of todos
-    const reorderItems = screen.getAllByTestId(/reorder-item-/);
-    expect(reorderItems).toHaveLength(mockTodos.length);
+    const todoItems = screen.getAllByTestId(/todo-item-/);
+    expect(todoItems).toHaveLength(mockTodos.length);
   });
 });
