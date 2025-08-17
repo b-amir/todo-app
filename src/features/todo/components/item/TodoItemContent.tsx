@@ -35,7 +35,7 @@ export function TodoItemContent({
         >
           <span
             className={cn(
-              "text-base font-medium break-words transition-all duration-200 handwritten cursor-pointer",
+              "text-base font-medium transition-all duration-200 handwritten cursor-pointer sm:truncate",
               "leading-relaxed",
               todo.completed ? "text-black/60 line-through" : "text-ink-800"
             )}
@@ -48,7 +48,7 @@ export function TodoItemContent({
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              style={{ willChange: 'transform' }}
+              style={{ willChange: "transform" }}
             />
           )}
         </div>

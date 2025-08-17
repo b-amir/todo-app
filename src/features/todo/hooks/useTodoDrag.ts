@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useDragControls, useMotionValue, useTransform } from "framer-motion";
 
 export function useTodoDrag() {
@@ -10,11 +10,22 @@ export function useTodoDrag() {
 
   const handleDragStart = useCallback(() => {
     dragProgress.set(1);
+    document.body.style.overflow = "hidden";
+    document.body.style.touchAction = "none";
   }, [dragProgress]);
 
   const handleDragEnd = useCallback(() => {
     dragProgress.set(0);
+    document.body.style.overflow = "";
+    document.body.style.touchAction = "";
   }, [dragProgress]);
+
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
+  }, []);
 
   return {
     controls,
