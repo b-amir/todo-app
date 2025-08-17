@@ -27,17 +27,23 @@ export function InfoTiles({
 
   return (
     <div className="grid grid-cols-4 gap-2 sm:gap-4">
-      <Logo />
-      <TotalTodosStat totalTodos={totalTodos} />
-      <SyncStatus
-        isOnline={isOnline}
-        hasLocalChanges={hasLocalChangesFromState}
-        isFetching={isFetching}
-        showRefreshButton={showRefreshButton}
-        onFetchFromServer={onFetchFromServer}
-        onReset={onReset}
-        hasTodos={todos.length > 0}
-      />
+      <div className="col-span-2 sm:col-span-2">
+        <Logo />
+      </div>
+      <div className="hidden sm:block col-span-1 sm:col-span-1">
+        <TotalTodosStat totalTodos={totalTodos} />
+      </div>
+      <div className="col-span-2 sm:col-span-1">
+        <SyncStatus
+          isOnline={isOnline}
+          hasLocalChanges={hasLocalChangesFromState}
+          isFetching={isFetching}
+          showRefreshButton={showRefreshButton}
+          onFetchFromServer={onFetchFromServer}
+          onReset={onReset}
+          hasTodos={todos.length > 0}
+        />
+      </div>
     </div>
   );
 }
