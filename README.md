@@ -16,10 +16,9 @@ While the DummyJSON API provides endpoints for deleting and editing todos, these
 
 ## Demo & Screenshots
 
-### Live Demo
+### 🟢 Live Demo
 
-- **Production**: [URL to be added]
-- **Staging**: [URL to be added]
+- **CodeSandbox**: [https://856vwd-4173.csb.app/](https://856vwd-4173.csb.app/)
 
 ### Application Preview
 
