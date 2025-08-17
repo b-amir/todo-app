@@ -11,4 +11,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./"),
     },
   },
+  preview: {
+    allowedHosts: ["856vwd-4173.csb.app"],
+  },
 });
