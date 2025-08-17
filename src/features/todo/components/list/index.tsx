@@ -1,11 +1,12 @@
 import { useAppSelector, useAppDispatch } from "@/src/features/todo/hooks";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { reorderTodos } from "@/src/features/todo/store/todoSlice";
-import { Reorder, AnimatePresence } from "framer-motion";
+import { Reorder } from "framer-motion";
 import type { Todo } from "@/src/features/todo/api";
 import { toast } from "sonner";
 import { LoadMoreButton } from "@/src/features/todo/components/layout";
 import { TodoItem } from "@/src/features/todo/components/item";
+import { LazyMotion, domMax } from "framer-motion";
 
 interface TodoListProps {
   onLoadMore: () => void;
@@ -14,49 +15,57 @@ interface TodoListProps {
 
 export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
   const dispatch = useAppDispatch();
-  const { todos } = useAppSelector((state) => state.todos);
-  const [isReordered, setIsReordered] = useState(false);
+  const { todos: todosFromStore } = useAppSelector((state) => state.todos);
+  const [todos, setTodos] = useState(todosFromStore);
 
-  const filteredTodos = todos;
+  useEffect(() => {
+    setTodos(todosFromStore);
+  }, [todosFromStore]);
 
-  const handleReorder = useCallback(
-    (newFilteredTodos: Todo[]) => {
-      const movedItemId = newFilteredTodos.find(
-        (todo: Todo, i: number) => todos[i]?.id !== todo.id
-      )?.id;
+  const handleReorder = useCallback((newOrder: Todo[]) => {
+    setTodos(newOrder);
+  }, []);
 
-      if (movedItemId) {
-        const oldIndex = todos.findIndex(
-          (todo: Todo) => todo.id === movedItemId
-        );
-        const newIndex = newFilteredTodos.findIndex(
-          (todo: Todo) => todo.id === movedItemId
-        );
+  const handleDragEnd = useCallback(() => {
+    const oldIndexMap = new Map(
+      todosFromStore.map((todo, index) => [todo.id, index])
+    );
 
-        if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-          dispatch(
-            reorderTodos({
-              fromIndex: oldIndex,
-              toIndex: newIndex,
-            })
-          );
-          setIsReordered(true);
-        }
+    let movedItemId: string | null = null;
+    let maxDisplacement = -1;
+
+    for (const todo of todos) {
+      const oldIndex = oldIndexMap.get(todo.id);
+      if (oldIndex === undefined) continue;
+
+      const newIndex = todos.findIndex((t) => t.id === todo.id);
+      const displacement = Math.abs(newIndex - oldIndex);
+
+      if (displacement > maxDisplacement) {
+        maxDisplacement = displacement;
+        movedItemId = todo.id;
       }
-    },
-    [todos, dispatch]
-  );
-
-  const handleDragEnd = () => {
-    if (isReordered) {
-      toast.success("Task reordered successfully!", {
-        description: "Your list has been updated with the new order.",
-      });
-      setIsReordered(false);
     }
-  };
 
-  if (filteredTodos.length === 0) {
+    if (movedItemId) {
+      const oldIndex = oldIndexMap.get(movedItemId);
+      const newIndex = todos.findIndex((t) => t.id === movedItemId);
+
+      if (oldIndex !== undefined && newIndex !== -1 && oldIndex !== newIndex) {
+        dispatch(
+          reorderTodos({
+            fromIndex: oldIndex,
+            toIndex: newIndex,
+          })
+        );
+        toast.success("Task reordered successfully!", {
+          description: "Your list has been updated with the new order.",
+        });
+      }
+    }
+  }, [todos, todosFromStore, dispatch]);
+
+  if (todos.length === 0) {
     return (
       <div className="text-center py-10">
         <div className="text-ink/60 text-lg mb-2 handwritten">
@@ -71,29 +80,22 @@ export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
 
   return (
     <>
-      <Reorder.Group
-        axis="y"
-        values={filteredTodos}
-        onReorder={handleReorder}
-        className="flex flex-col gap-0 w-full mb-0"
-      >
-        <AnimatePresence>
-          {filteredTodos.map((todo) => (
-            <Reorder.Item
+      <LazyMotion features={domMax}>
+        <Reorder.Group
+          axis="y"
+          values={todos}
+          onReorder={handleReorder}
+          className="flex flex-col gap-0 w-full mb-0"
+        >
+          {todos.map((todo) => (
+            <TodoItem
               key={todo._tempId || todo.id}
-              value={todo}
-              className="w-full"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
+              todo={todo}
               onDragEnd={handleDragEnd}
-            >
-              <TodoItem todo={todo} />
-            </Reorder.Item>
+            />
           ))}
-        </AnimatePresence>
-      </Reorder.Group>
+        </Reorder.Group>
+      </LazyMotion>
       <LoadMoreButton onLoadMore={onLoadMore} isLoading={isLoading} />
     </>
   );

@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 import type { Todo } from "@/src/features/todo/api";
 import { useAppDispatch, useAppSelector } from "@/src/features/todo/hooks";
 import { updateTodo, deleteTodo } from "@/src/features/todo/store/todoSlice";
@@ -17,21 +17,25 @@ import { TodoItemCheckbox } from "./TodoItemCheckbox";
 
 interface TodoItemProps {
   todo: Todo;
+  onDragEnd?: () => void;
 }
 
-export const TodoItem = memo(function TodoItem({ todo }: TodoItemProps) {
+export const TodoItem = memo(function TodoItem({
+  todo,
+  onDragEnd,
+}: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const dispatch = useAppDispatch();
-  const { localDiffs } = useAppSelector((state) => state.todos);
-
-  const isNewlyCreated = localDiffs.created.some((t) => t.id === todo.id);
+  const isNewlyCreated = useAppSelector((state) =>
+    state.todos.localDiffs.created.some((t) => t.id === todo.id)
+  );
 
   const updateMutation = useToggleTodoCompletion();
   const deleteMutation = useDeleteTodo();
   const { controls, scale, zIndex, handleDragStart, handleDragEnd } =
     useTodoDrag();
 
-  const handleToggleComplete = () => {
+  const handleToggleComplete = useCallback(() => {
     if (isNewlyCreated) {
       dispatch(
         updateTodo({
@@ -50,9 +54,9 @@ export const TodoItem = memo(function TodoItem({ todo }: TodoItemProps) {
         completed: !todo.completed,
       });
     }
-  };
+  }, [isNewlyCreated, dispatch, todo.id, todo.completed, updateMutation]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (isNewlyCreated) {
       dispatch(deleteTodo(todo.id));
       toast.success("Todo deleted locally!", {
@@ -63,11 +67,15 @@ export const TodoItem = memo(function TodoItem({ todo }: TodoItemProps) {
     } else {
       deleteMutation.mutate(todo.id);
     }
-  };
+  }, [isNewlyCreated, dispatch, todo.id, todo.todo, deleteMutation]);
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     setIsEditing(true);
-  };
+  }, []);
+
+  const handleCancelEditing = useCallback(() => {
+    setIsEditing(false);
+  }, []);
 
   return (
     <Reorder.Item
@@ -79,10 +87,13 @@ export const TodoItem = memo(function TodoItem({ todo }: TodoItemProps) {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      style={{ scale, zIndex }}
+      style={{ scale, zIndex, willChange: 'transform' }}
       dragSnapToOrigin
       onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onDragEnd={() => {
+        handleDragEnd();
+        onDragEnd?.();
+      }}
       layout
       transition={{
         type: "spring",
@@ -109,7 +120,7 @@ export const TodoItem = memo(function TodoItem({ todo }: TodoItemProps) {
         <TodoItemContent
           todo={todo}
           isEditing={isEditing}
-          onCancel={() => setIsEditing(false)}
+          onCancel={handleCancelEditing}
           onToggle={handleToggleComplete}
         />
         {!isEditing && (

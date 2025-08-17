@@ -48,6 +48,7 @@ export function TodoItemContent({
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
+              style={{ willChange: 'transform' }}
             />
           )}
         </div>
