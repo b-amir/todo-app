@@ -14,7 +14,6 @@
     "@hookform/resolvers": "^5.2.1",
     "@reduxjs/toolkit": "latest",
     "@tanstack/react-query": "latest",
-    "@tanstack/react-query-devtools": "latest",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "latest",
