@@ -1,5 +1,5 @@
 import { useAppSelector, useAppDispatch } from "@/src/features/todo/hooks";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { reorderTodos } from "@/src/features/todo/store/todoSlice";
 import { Reorder } from "framer-motion";
 import type { Todo } from "@/src/features/todo/api";
@@ -16,14 +16,11 @@ interface TodoListProps {
 export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
   const dispatch = useAppDispatch();
   const { todos: todosFromStore } = useAppSelector((state) => state.todos);
-  const [todos, setTodos] = useState(todosFromStore);
-
-  useEffect(() => {
-    setTodos(todosFromStore);
-  }, [todosFromStore]);
+  const [localOrder, setLocalOrder] = useState<Todo[] | null>(null);
+  const todos = localOrder ?? todosFromStore;
 
   const handleReorder = useCallback((newOrder: Todo[]) => {
-    setTodos(newOrder);
+    setLocalOrder(newOrder);
   }, []);
 
   const handleDragEnd = useCallback(() => {
@@ -63,6 +60,8 @@ export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
         });
       }
     }
+
+    setLocalOrder(null);
   }, [todos, todosFromStore, dispatch]);
 
   if (todos.length === 0) {
