@@ -31,7 +31,7 @@ export const updateTodo = ({
   });
 };
 
-export const deleteTodo = (id: string): Promise<DeletedTodo> => {
+export const deleteTodo = (id: number): Promise<DeletedTodo> => {
   return apiClient(`todos/${id}`, {
     method: "DELETE",
   });

@@ -16,7 +16,7 @@ export function useDeleteTodo() {
   const dispatch = useAppDispatch();
   const { todos } = useAppSelector((state) => state.todos);
 
-  return useMutation<DeletedTodo, ApiError, string, { previousTodos: Todo[] }>({
+  return useMutation<DeletedTodo, ApiError, number, { previousTodos: Todo[] }>({
     mutationFn: deleteTodo,
     onMutate: async (deletedTodoId) => {
       const previousTodos = [...todos];

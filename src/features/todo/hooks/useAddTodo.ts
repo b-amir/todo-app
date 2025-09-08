@@ -3,6 +3,7 @@ import {
   createTodo,
   type CreateTodoRequest,
   type Todo,
+  type TempId,
 } from "@/src/features/todo/api";
 import { useAppDispatch, useAppSelector } from "@/src/features/todo/hooks";
 import {
@@ -23,12 +24,12 @@ export function useAddTodo(reset: UseFormReset<AddTodoFormInputs>) {
     Todo,
     ApiError,
     CreateTodoRequest,
-    { previousTodos: Todo[]; tempId: string } | undefined
+    { previousTodos: Todo[]; tempId: TempId } | undefined
   >({
     mutationFn: (newTodo: CreateTodoRequest) => createTodo(newTodo),
     onMutate: async (newTodo) => {
-      const tempId = Date.now().toString();
-      const tempTodo = { ...newTodo, id: tempId, _tempId: tempId };
+      const tempId = Date.now().toString() as TempId;
+      const tempTodo = { ...newTodo, id: -Date.now(), _tempId: tempId } as Todo;
 
       const previousTodos = todos;
       dispatch(addTodo(tempTodo));
@@ -46,7 +47,9 @@ export function useAddTodo(reset: UseFormReset<AddTodoFormInputs>) {
     },
     onSuccess: (newTodo, _variables, context) => {
       if (context) {
-        dispatch(replaceTodo({ tempId: context.tempId, newTodo }));
+        dispatch(
+          replaceTodo({ tempId: context.tempId as unknown as string, newTodo })
+        );
       }
     },
     onError: (_error, _variables, context) => {

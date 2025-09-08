@@ -31,7 +31,7 @@ export function TodoList({ onLoadMore, isLoading = false }: TodoListProps) {
       todosFromStore.map((todo, index) => [todo.id, index])
     );
 
-    let movedItemId: string | null = null;
+    let movedItemId: number | null = null;
     let maxDisplacement = -1;
 
     for (const todo of todos) {

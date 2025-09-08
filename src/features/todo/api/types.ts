@@ -1,9 +1,11 @@
+export type TempId = string & { readonly __brand: "TempId" };
+
 export interface Todo {
-  id: string;
+  id: number;
   todo: string;
   completed: boolean;
   userId: number;
-  _tempId?: string;
+  _tempId?: TempId;
 }
 
 export interface TodosResponse {
@@ -20,7 +22,7 @@ export interface CreateTodoRequest {
 }
 
 export interface UpdateTodoRequest {
-  id: string;
+  id: number;
   todo?: string;
   completed?: boolean;
 }

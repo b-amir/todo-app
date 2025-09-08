@@ -13,7 +13,7 @@ export const recalculateLocalDiffs = (state: TodoState) => {
 
   const created: Todo[] = [];
   const updated: Todo[] = [];
-  const deleted: string[] = [];
+  const deleted: number[] = [];
   let reorderedCount = 0;
 
   const serverTodoMap = new Map(
