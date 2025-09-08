@@ -150,10 +150,17 @@ export function useTodoMutations() {
           label: "Undo",
           onClick: async () => {
             try {
-              await updateTodoApi({
+              const revertedTodo = await updateTodoApi({
                 id: updatedTodo.id,
                 completed: !updatedTodo.completed,
               });
+              dispatch(
+                updateTodoState({
+                  id: revertedTodo.id,
+                  updates: revertedTodo,
+                })
+              );
+              toast.success("Undo successful!");
             } catch (error) {
               toast.error("Failed to undo", {
                 description: "Couldn't reverse the action on the server.",
@@ -190,8 +197,8 @@ export function useTodoMutations() {
       dispatch(deleteTodoState(deletedTodoId));
       return { previousTodos };
     },
-    onSuccess: (deletedTodo) => {
-      if (deletedTodo) {
+    onSuccess: (deletedTodo, _variables, context) => {
+      if (deletedTodo && context?.previousTodos) {
         toast.success("Todo deleted!", {
           description: `Task "${
             deletedTodo.todo.length > 20
@@ -201,16 +208,27 @@ export function useTodoMutations() {
           action: {
             label: "Undo",
             onClick: async () => {
+              const originalTodo = context.previousTodos.find(
+                (t: Todo) => t.id === deletedTodo.id
+              );
+              if (!originalTodo) {
+                toast.error("Failed to find original todo for undo.");
+                return;
+              }
+              dispatch(addTodoState(originalTodo));
+
               try {
                 await createTodo({
                   todo: deletedTodo.todo,
                   completed: deletedTodo.completed,
                   userId: deletedTodo.userId,
                 });
+                toast.success("Undo successful!");
               } catch (error) {
                 toast.error("Failed to undo", {
                   description: "Couldn't restore the todo on the server.",
                 });
+                dispatch(deleteTodoState(originalTodo.id));
               }
             },
           },
