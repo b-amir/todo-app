@@ -145,8 +145,6 @@ const createTestStore = (initialState = {}) => {
       todos: {
         todos: [],
         serverTodos: [],
-        filter: "all" as const,
-        searchQuery: "",
         draggedTodo: null,
         isLoading: false,
         error: null,

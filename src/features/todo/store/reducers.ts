@@ -5,15 +5,6 @@ import { recalculateLocalDiffs } from "@/src/shared/utils/recalculateLocalDiffs"
 import type { TodoState } from "./todoSlice";
 
 export const reducers = {
-  setFilter: (
-    state: TodoState,
-    action: PayloadAction<"all" | "active" | "completed">
-  ) => {
-    state.filter = action.payload;
-  },
-  setSearchQuery: (state: TodoState, action: PayloadAction<string>) => {
-    state.searchQuery = action.payload;
-  },
   setDraggedTodo: (state: TodoState, action: PayloadAction<Todo | null>) => {
     state.draggedTodo = action.payload;
   },

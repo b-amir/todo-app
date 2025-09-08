@@ -6,8 +6,6 @@ import { reducers } from "./reducers";
 export interface TodoState {
   todos: Todo[];
   serverTodos: Todo[];
-  filter: "all" | "active" | "completed";
-  searchQuery: string;
   draggedTodo: Todo | null;
   isLoading: boolean;
   error: string | null;
@@ -29,8 +27,6 @@ const savedState = loadFromLocalStorage();
 const initialState: TodoState = {
   todos: savedState?.todos || [],
   serverTodos: savedState?.serverTodos || [],
-  filter: "all",
-  searchQuery: "",
   draggedTodo: null,
   isLoading: false,
   error: null,
@@ -69,8 +65,6 @@ const todoSlice = createSlice({
 });
 
 export const {
-  setFilter,
-  setSearchQuery,
   setDraggedTodo,
   reorderTodos,
   setLoading,

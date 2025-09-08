@@ -4,8 +4,11 @@ import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { configureStore } from "@reduxjs/toolkit";
 import todoReducer from "@/src/features/todo/store/todoSlice";
+import type { UseFormRegister } from "react-hook-form";
 import { AddTodo } from "./AddTodo";
 import "@testing-library/jest-dom";
+
+type AddTodoFormValues = { todo: string };
 
 // Mock the hooks
 vi.mock("@/hooks", () => ({
@@ -49,7 +52,7 @@ vi.mock("./AddTodoForm", () => ({
     showSuccess,
   }: {
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    register: unknown;
+    register: UseFormRegister<AddTodoFormValues>;
     errors: { todo?: { message: string } };
     isSubmitting: boolean;
     isFocused: boolean;
@@ -92,8 +95,6 @@ const createTestStore = () => {
       todos: {
         todos: [],
         serverTodos: [],
-        filter: "all" as const,
-        searchQuery: "",
         draggedTodo: null,
         isLoading: false,
         error: null,

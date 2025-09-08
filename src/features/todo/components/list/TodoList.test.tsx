@@ -89,8 +89,6 @@ const createTestStore = (initialState = {}) => {
       todos: {
         todos: [],
         serverTodos: [],
-        filter: "all" as const,
-        searchQuery: "",
         draggedTodo: null,
         isLoading: false,
         error: null,
@@ -137,9 +135,9 @@ const renderWithProviders = (
 };
 
 const mockTodos: Todo[] = [
-  { id: "1", todo: "First todo", completed: false, userId: 1 },
-  { id: "2", todo: "Second todo", completed: true, userId: 1 },
-  { id: "3", todo: "Third todo", completed: false, userId: 1 },
+  { id: 1, todo: "First todo", completed: false, userId: 1 },
+  { id: 2, todo: "Second todo", completed: true, userId: 1 },
+  { id: 3, todo: "Third todo", completed: false, userId: 1 },
 ];
 
 describe("TodoList", () => {

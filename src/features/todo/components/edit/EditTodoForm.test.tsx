@@ -3,10 +3,13 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { configureStore } from "@reduxjs/toolkit";
+import type { UseFormRegister } from "react-hook-form";
 import todoReducer from "@/src/features/todo/store/todoSlice";
 import { EditTodoForm } from "./EditTodoForm";
 import type { Todo } from "@/src/features/todo/api/types";
 import "@testing-library/jest-dom";
+
+type AddTodoFormValues = { todo: string };
 
 // Mock the useEditTodo hook
 vi.mock("@/hooks", () => ({
@@ -50,7 +53,7 @@ vi.mock("./EditTodoFormUI", () => ({
     isPending,
   }: {
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    register: unknown;
+    register: UseFormRegister<AddTodoFormValues>;
     errors: { todo?: { message: string } };
     isSubmitting: boolean;
     onCancel: () => void;
@@ -95,8 +98,6 @@ const createTestStore = () => {
       todos: {
         todos: [],
         serverTodos: [],
-        filter: "all" as const,
-        searchQuery: "",
         draggedTodo: null,
         isLoading: false,
         error: null,
