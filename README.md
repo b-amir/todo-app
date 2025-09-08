@@ -10,7 +10,7 @@ A simple, yet interesting todo management application built with a React, demons
 
 This application provides a simple solution for managing daily tasks. It showcases a technology stack that includes **React**, **Redux Toolkit** for client state, and **React Query** for server state management.
 
-Key features include **optimistic updates** (with cache cancellation on mutate and invalidation on settle), **Undo** actions for delete/complete, **drag-and-drop** reordering, **persistent state** via localStorage, and a clean, utility-first design system built with Tailwind CSS. All API responses are validated with **Zod** to guard against shape drift. The API client supports configurable timeout/abort and exponential backoff retries for GET requests. Types are aligned with the server; locally created items use an optional branded `_tempId` for safe optimistic flows. Reducers remain pure with persistence and diffing handled by Redux listener middleware. The application leverages the **paginated DummyJSON API** to demonstrate infinite scroll handling.
+Key features include **optimistic updates** (with cache cancellation on mutate and invalidation on settle), **Undo** actions for delete/complete, **drag-and-drop** reordering, **persistent state** via localStorage, and a clean, utility-first design system built with Tailwind CSS. The application leverages the **paginated DummyJSON API** to demonstrate infinite scroll handling.
 
 While the DummyJSON API provides endpoints for deleting and editing todos, these are mock endpoints that do not persist data on the server. To create a seamless and realistic user experience, this project introduces a `localStorage` layer to persist all changes locally, making the application feel like a fully-functional todo app.
 
