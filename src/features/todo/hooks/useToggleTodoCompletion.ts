@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   updateTodo,
   type Todo,
@@ -14,6 +14,7 @@ import ApiError from "@/src/shared/utils/ApiError";
 
 export function useToggleTodoCompletion() {
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const { todos } = useAppSelector((state) => state.todos);
 
   return useMutation<
@@ -24,6 +25,7 @@ export function useToggleTodoCompletion() {
   >({
     mutationFn: (updatedTodo: UpdateTodoRequest) => updateTodo(updatedTodo),
     onMutate: async (updatedTodo) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
       const previousTodos = todos;
       dispatch(
         updateTodoState({
@@ -48,6 +50,9 @@ export function useToggleTodoCompletion() {
         description:
           "Couldn't save to the server. Your changes have been rolled back.",
       });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }

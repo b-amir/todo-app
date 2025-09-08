@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   deleteTodo,
   type DeletedTodo,
@@ -14,11 +14,13 @@ import ApiError from "@/src/shared/utils/ApiError";
 
 export function useDeleteTodo() {
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const { todos } = useAppSelector((state) => state.todos);
 
   return useMutation<DeletedTodo, ApiError, number, { previousTodos: Todo[] }>({
     mutationFn: deleteTodo,
     onMutate: async (deletedTodoId) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
       const previousTodos = [...todos];
       dispatch(deleteTodoState(deletedTodoId));
       return { previousTodos };
@@ -42,6 +44,9 @@ export function useDeleteTodo() {
         description:
           "Couldn't save to the server. Your todo has been restored.",
       });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }

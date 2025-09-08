@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   updateTodo,
   type UpdateTodoRequest,
@@ -14,6 +14,7 @@ import ApiError from "@/src/shared/utils/ApiError";
 
 export function useEditTodo(onSuccessCallback: () => void) {
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const { todos } = useAppSelector((state) => state.todos);
 
   return useMutation<
@@ -24,6 +25,7 @@ export function useEditTodo(onSuccessCallback: () => void) {
   >({
     mutationFn: (updatedTodo: UpdateTodoRequest) => updateTodo(updatedTodo),
     onMutate: async (updatedTodo) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
       const previousTodos = todos;
       dispatch(updateTodoState({ id: updatedTodo.id, updates: updatedTodo }));
       onSuccessCallback();
@@ -47,6 +49,9 @@ export function useEditTodo(onSuccessCallback: () => void) {
         description:
           error instanceof Error ? error.message : "An unknown error occurred.",
       });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }

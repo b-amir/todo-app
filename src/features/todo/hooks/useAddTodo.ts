@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createTodo,
   type CreateTodoRequest,
@@ -18,16 +18,22 @@ import ApiError from "@/src/shared/utils/ApiError";
 
 export function useAddTodo(reset: UseFormReset<AddTodoFormInputs>) {
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const { todos } = useAppSelector((state) => state.todos);
 
   return useMutation<
     Todo,
     ApiError,
     CreateTodoRequest,
-    { previousTodos: Todo[]; tempId: TempId } | undefined
+    | {
+        previousTodos: Todo[];
+        tempId: TempId;
+      }
+    | undefined
   >({
     mutationFn: (newTodo: CreateTodoRequest) => createTodo(newTodo),
     onMutate: async (newTodo) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
       const tempId = Date.now().toString() as TempId;
       const tempTodo = { ...newTodo, id: -Date.now(), _tempId: tempId } as Todo;
 
@@ -60,6 +66,9 @@ export function useAddTodo(reset: UseFormReset<AddTodoFormInputs>) {
         description:
           "Couldn't save to the server. Your new todo has been removed.",
       });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }
