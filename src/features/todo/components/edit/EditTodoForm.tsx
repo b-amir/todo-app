@@ -54,6 +54,7 @@ export function EditTodoForm({ todo, onCancel }: EditTodoFormProps) {
       onCancel();
     } else {
       updateTodo({ id: todo.id, todo: data.todo });
+      onCancel();
     }
   };
 
