@@ -1,33 +1,33 @@
 export type TempId = string & { readonly __brand: "TempId" };
 
 export interface Todo {
-  id: number;
-  todo: string;
-  completed: boolean;
-  userId: number;
-  _tempId?: TempId;
+  readonly id: number;
+  readonly todo: string;
+  readonly completed: boolean;
+  readonly userId: number;
+  readonly _tempId?: TempId;
 }
 
 export interface TodosResponse {
-  todos: Todo[];
-  total: number;
-  skip: number;
-  limit: number;
+  readonly todos: readonly Todo[];
+  readonly total: number;
+  readonly skip: number;
+  readonly limit: number;
 }
 
 export interface CreateTodoRequest {
-  todo: string;
-  completed: boolean;
-  userId: number;
+  readonly todo: string;
+  readonly completed: boolean;
+  readonly userId: number;
 }
 
 export interface UpdateTodoRequest {
-  id: number;
-  todo?: string;
-  completed?: boolean;
+  readonly id: number;
+  readonly todo?: string;
+  readonly completed?: boolean;
 }
 
 export interface DeletedTodo extends Todo {
-  isDeleted: boolean;
-  deletedOn: string;
+  readonly isDeleted: boolean;
+  readonly deletedOn: string;
 }
