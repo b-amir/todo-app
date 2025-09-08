@@ -12,6 +12,6 @@ export default defineConfig({
     },
   },
   preview: {
-    allowedHosts: ["856vwd-4173.csb.app"],
+    allowedHosts: ["4mz782-4173.csb.app"],
   },
 });
