@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 import {
   updateTodo,
   type Todo,
@@ -16,6 +17,7 @@ export function useToggleTodoCompletion() {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const { todos } = useAppSelector((state) => state.todos);
+  const lastSnapshotRef = useRef<Todo[] | null>(null);
 
   return useMutation<
     Todo,
@@ -33,13 +35,23 @@ export function useToggleTodoCompletion() {
           updates: updatedTodo,
         })
       );
+      lastSnapshotRef.current = previousTodos;
       return { previousTodos };
     },
-    onSuccess: (updatedTodo) => {
+    onSuccess: (updatedTodo, _variables, context) => {
       toast.success("Todo updated!", {
         description: `Task marked as ${
           updatedTodo.completed ? "complete" : "incomplete"
         }.`,
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            if (context?.previousTodos) {
+              dispatch(setTodos(context.previousTodos));
+            }
+            queryClient.invalidateQueries({ queryKey: ["todos"] });
+          },
+        },
       });
     },
     onError: (_error, _variables, context) => {

@@ -25,7 +25,7 @@ export function useDeleteTodo() {
       dispatch(deleteTodoState(deletedTodoId));
       return { previousTodos };
     },
-    onSuccess: (deletedTodo) => {
+    onSuccess: (deletedTodo, _variables, context) => {
       if (deletedTodo) {
         toast.success("Todo deleted!", {
           description: `Task "${
@@ -33,6 +33,15 @@ export function useDeleteTodo() {
               ? `${deletedTodo.todo.substring(0, 20)}...`
               : deletedTodo.todo
           }" has been removed.`,
+          action: {
+            label: "Undo",
+            onClick: async () => {
+              if (context?.previousTodos) {
+                dispatch(setTodos(context.previousTodos));
+              }
+              queryClient.invalidateQueries({ queryKey: ["todos"] });
+            },
+          },
         });
       }
     },
