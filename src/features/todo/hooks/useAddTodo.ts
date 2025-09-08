@@ -14,7 +14,7 @@ import {
 import { toast } from "sonner";
 import type { UseFormReset } from "react-hook-form";
 import type { AddTodoFormInputs } from "@/src/features/todo/components/add/AddTodo";
-import { ApiError } from "@/src/shared/utils/apiClient";
+import ApiError from "@/src/shared/utils/ApiError";
 
 export function useAddTodo(reset: UseFormReset<AddTodoFormInputs>) {
   const dispatch = useAppDispatch();

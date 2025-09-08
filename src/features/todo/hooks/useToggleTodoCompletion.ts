@@ -10,7 +10,7 @@ import {
   setTodos,
 } from "@/src/features/todo/store/todoSlice";
 import { toast } from "sonner";
-import { ApiError } from "@/src/shared/utils/apiClient";
+import ApiError from "@/src/shared/utils/ApiError";
 
 export function useToggleTodoCompletion() {
   const dispatch = useAppDispatch();

@@ -1,4 +1,5 @@
-import apiClient, { ApiError } from "@/src/shared/utils/apiClient";
+import apiClient from "@/src/shared/utils/apiClient";
+import ApiError from "@/src/shared/utils/ApiError";
 import type {
   CreateTodoRequest,
   DeletedTodo,
