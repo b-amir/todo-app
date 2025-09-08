@@ -1,10 +1,9 @@
-import React from "react";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useAddTodo } from "@/src/features/todo/hooks";
+import { useTodoMutations } from "@/src/features/todo/hooks";
 import { AddTodoForm } from "./AddTodoForm";
 import { addTodoSchema } from "@/src/features/todo/utils/validations/todoSchema";
 
@@ -23,7 +22,7 @@ export function AddTodo() {
     resolver: zodResolver(addTodoSchema),
   });
 
-  const mutation = useAddTodo(reset);
+  const { addTodo } = useTodoMutations();
 
   const onSubmit: SubmitHandler<AddTodoFormInputs> = (data) => {
     const newTodo = {
@@ -31,7 +30,7 @@ export function AddTodo() {
       completed: false,
       userId: Math.floor(Math.random() * 100) + 1,
     };
-    mutation.mutate(newTodo);
+    addTodo(newTodo, reset);
   };
 
   const onInvalid = (errors: FieldErrors<AddTodoFormInputs>) => {

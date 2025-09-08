@@ -6,9 +6,9 @@ import { toast } from "sonner";
 import {
   useAppDispatch,
   useAppSelector,
-  useEditTodo,
+  useTodoMutations,
 } from "@/src/features/todo/hooks";
-import { updateTodo } from "@/src/features/todo/store/todoSlice";
+import { updateTodo as updateTodoState } from "@/src/features/todo/store/todoSlice";
 import type { Todo } from "@/src/features/todo/api";
 import { editTodoSchema } from "@/src/features/todo/utils/validations/todoSchema";
 import { EditTodoFormUI } from "./EditTodoFormUI";
@@ -36,7 +36,7 @@ export function EditTodoForm({ todo, onCancel }: EditTodoFormProps) {
     },
   });
 
-  const mutation = useEditTodo(onCancel);
+  const { updateTodo } = useTodoMutations();
 
   const onSubmit: SubmitHandler<EditTodoFormInputs> = (data) => {
     if (data.todo === todo.todo) {
@@ -45,7 +45,7 @@ export function EditTodoForm({ todo, onCancel }: EditTodoFormProps) {
     }
 
     if (isNewlyCreated) {
-      dispatch(updateTodo({ id: todo.id, updates: { todo: data.todo } }));
+      dispatch(updateTodoState({ id: todo.id, updates: { todo: data.todo } }));
       toast.success("Todo updated locally!", {
         description: `Task updated to "${
           data.todo.length > 20 ? `${data.todo.substring(0, 20)}...` : data.todo
@@ -53,7 +53,7 @@ export function EditTodoForm({ todo, onCancel }: EditTodoFormProps) {
       });
       onCancel();
     } else {
-      mutation.mutate({ id: todo.id, todo: data.todo });
+      updateTodo({ id: todo.id, todo: data.todo });
     }
   };
 
@@ -84,7 +84,7 @@ export function EditTodoForm({ todo, onCancel }: EditTodoFormProps) {
       isSubmitting={isSubmitting}
       onCancel={onCancel}
       handleKeyDown={handleKeyDown}
-      isPending={mutation.isPending}
+      isPending={false}
     />
   );
 }

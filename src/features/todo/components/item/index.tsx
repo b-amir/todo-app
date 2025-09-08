@@ -1,15 +1,18 @@
 import { memo, useState, useCallback } from "react";
 import type { Todo } from "@/src/features/todo/api";
-import { useAppDispatch, useAppSelector } from "@/src/features/todo/hooks";
-import { updateTodo, deleteTodo } from "@/src/features/todo/store/todoSlice";
+import {
+  useAppDispatch,
+  useAppSelector,
+  useTodoMutations,
+  useTodoDrag,
+} from "@/src/features/todo/hooks";
+import {
+  updateTodo,
+  deleteTodo as deleteTodoState,
+} from "@/src/features/todo/store/todoSlice";
 import { toast } from "sonner";
 import { cn } from "@/src/shared/utils/tailwindUtils";
 import { Reorder } from "framer-motion";
-import {
-  useToggleTodoCompletion,
-  useDeleteTodo,
-  useTodoDrag,
-} from "@/src/features/todo/hooks";
 import { TodoItemActions } from "./TodoItemActions";
 import { TodoItemContent } from "./TodoItemContent";
 import { TodoItemDragHandle } from "./TodoItemDragHandle";
@@ -30,8 +33,7 @@ export const TodoItem = memo(function TodoItem({
     state.todos.localDiffs.created.some((t) => t.id === todo.id)
   );
 
-  const updateMutation = useToggleTodoCompletion();
-  const deleteMutation = useDeleteTodo();
+  const { toggleCompletion, deleteTodo } = useTodoMutations();
   const { controls, scale, zIndex, handleDragStart, handleDragEnd } =
     useTodoDrag();
 
@@ -49,25 +51,22 @@ export const TodoItem = memo(function TodoItem({
         }.`,
       });
     } else {
-      updateMutation.mutate({
-        id: todo.id,
-        completed: !todo.completed,
-      });
+      toggleCompletion(todo.id, !todo.completed);
     }
-  }, [isNewlyCreated, dispatch, todo.id, todo.completed, updateMutation]);
+  }, [isNewlyCreated, dispatch, todo.id, todo.completed, toggleCompletion]);
 
   const handleDelete = useCallback(() => {
     if (isNewlyCreated) {
-      dispatch(deleteTodo(todo.id));
+      dispatch(deleteTodoState(todo.id));
       toast.success("Todo deleted locally!", {
         description: `Task "${
           todo.todo.length > 20 ? `${todo.todo.substring(0, 20)}...` : todo.todo
         }" has been deleted.`,
       });
     } else {
-      deleteMutation.mutate(todo.id);
+      deleteTodo(todo.id);
     }
-  }, [isNewlyCreated, dispatch, todo.id, todo.todo, deleteMutation]);
+  }, [isNewlyCreated, dispatch, todo.id, todo.todo, deleteTodo]);
 
   const handleEdit = useCallback(() => {
     setIsEditing(true);
@@ -126,7 +125,7 @@ export const TodoItem = memo(function TodoItem({
         {!isEditing && (
           <TodoItemActions
             todo={todo}
-            isDeleting={deleteMutation.isPending}
+            isDeleting={false}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />

@@ -9,21 +9,29 @@ import type { Todo } from "@/src/features/todo/api/types";
 import "@testing-library/jest-dom";
 
 // Mock the hooks
-vi.mock("@/hooks/useToggleTodoCompletion", () => ({
-  useToggleTodoCompletion: () => ({
-    mutate: vi.fn(),
-    isPending: false,
+vi.mock("@/src/features/todo/hooks", () => ({
+  useAppDispatch: () => vi.fn(),
+  useAppSelector: (selector: (state: unknown) => unknown) =>
+    selector({
+      todos: {
+        localDiffs: {
+          created: [],
+          updated: [],
+          deleted: [],
+          reorderedCount: 0,
+        },
+      },
+    }),
+  useTodoMutations: () => ({
+    addTodo: vi.fn(),
+    updateTodo: vi.fn(),
+    toggleCompletion: vi.fn(),
+    deleteTodo: vi.fn(),
+    isAdding: false,
+    isUpdating: false,
+    isToggling: false,
+    isDeleting: false,
   }),
-}));
-
-vi.mock("@/hooks/useDeleteTodo", () => ({
-  useDeleteTodo: () => ({
-    mutate: vi.fn(),
-    isPending: false,
-  }),
-}));
-
-vi.mock("@/hooks/useTodoDrag", () => ({
   useTodoDrag: () => ({
     controls: {},
     scale: 1,

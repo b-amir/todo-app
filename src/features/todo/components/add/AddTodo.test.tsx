@@ -11,7 +11,7 @@ import "@testing-library/jest-dom";
 type AddTodoFormValues = { todo: string };
 
 // Mock the hooks
-vi.mock("@/hooks", () => ({
+vi.mock("@/src/features/todo/hooks", () => ({
   useAppDispatch: () => vi.fn(),
   useAppSelector: (selector: (state: unknown) => unknown) =>
     selector({
@@ -24,11 +24,15 @@ vi.mock("@/hooks", () => ({
         },
       },
     }),
-  useAddTodo: () => ({
-    mutate: vi.fn(),
-    isPending: false,
-    isSuccess: false,
-    isError: false,
+  useTodoMutations: () => ({
+    addTodo: vi.fn(),
+    updateTodo: vi.fn(),
+    toggleCompletion: vi.fn(),
+    deleteTodo: vi.fn(),
+    isAdding: false,
+    isUpdating: false,
+    isToggling: false,
+    isDeleting: false,
   }),
 }));
 

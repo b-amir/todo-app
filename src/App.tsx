@@ -12,9 +12,9 @@ function TodoAppContent() {
     hasLocalChanges,
     isFetching,
     error,
-    handleFetchFromServer,
-    handleReset,
-    handleLoadMore,
+    refresh,
+    reset,
+    loadMore,
   } = useTodos();
 
   const showRefreshButton = !hasData || hasLocalChanges;
@@ -25,8 +25,8 @@ function TodoAppContent() {
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
           <ErrorBoundary>
             <InfoTiles
-              onFetchFromServer={handleFetchFromServer}
-              onReset={handleReset}
+              onFetchFromServer={refresh}
+              onReset={reset}
               isFetching={isFetching}
               hasLocalChanges={hasLocalChanges}
               showRefreshButton={showRefreshButton}
@@ -43,7 +43,7 @@ function TodoAppContent() {
                 <div className="flex items-center justify-center py-4">
                   <Button
                     variant="outline"
-                    onClick={handleFetchFromServer}
+                    onClick={refresh}
                     loading={isFetching}
                     loadingText="Retrying..."
                     className="handwritten bg-transparent border-red-400 text-red-700 hover:bg-red-50"
@@ -54,7 +54,7 @@ function TodoAppContent() {
               )}
 
               <ErrorBoundary>
-                <TodoList onLoadMore={handleLoadMore} isLoading={isFetching} />
+                <TodoList onLoadMore={loadMore} isLoading={isFetching} />
               </ErrorBoundary>
             </div>
           </div>

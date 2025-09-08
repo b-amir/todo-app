@@ -5,22 +5,18 @@ import {
   appendTodos,
   resetTodos,
 } from "@/src/features/todo/store/todoSlice";
-import type { UseQueryResult } from "@tanstack/react-query";
-import type { TodosResponse } from "@/src/features/todo/api";
 
-export function useTodosActions(
+export function useTodoActions(
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
-  refetch: UseQueryResult<TodosResponse>["refetch"]
+  refetch: () => Promise<any>
 ) {
   const dispatch = useAppDispatch();
 
-  const handleLoadMore = (hasMoreTodos: boolean) => {
-    if (hasMoreTodos) {
-      setCurrentPage((prev) => prev + 1);
-    }
+  const loadMore = () => {
+    setCurrentPage((prev) => prev + 1);
   };
 
-  const handleFetchFromServer = async () => {
+  const refresh = async () => {
     dispatch(clearLocalDiffs());
     dispatch(setLastSyncTime(null));
     setCurrentPage(1);
@@ -37,7 +33,7 @@ export function useTodosActions(
     }
   };
 
-  const handleReset = async () => {
+  const reset = async () => {
     dispatch(resetTodos());
     setCurrentPage(1);
     const { data } = await refetch();
@@ -54,8 +50,8 @@ export function useTodosActions(
   };
 
   return {
-    handleLoadMore,
-    handleFetchFromServer,
-    handleReset,
+    loadMore,
+    refresh,
+    reset,
   };
 }
