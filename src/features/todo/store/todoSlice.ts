@@ -65,6 +65,7 @@ const todoSlice = createSlice({
 });
 
 export const {
+  setLocalDiffs,
   setDraggedTodo,
   reorderTodos,
   setLoading,

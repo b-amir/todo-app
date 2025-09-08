@@ -1,10 +1,19 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { Todo } from "@/src/features/todo/api";
-import { saveToLocalStorage } from "@/src/shared/utils/localStorage";
-import { recalculateLocalDiffs } from "@/src/shared/utils/recalculateLocalDiffs";
 import type { TodoState } from "./todoSlice";
 
 export const reducers = {
+  setLocalDiffs: (
+    state: TodoState,
+    action: PayloadAction<{
+      created: Todo[];
+      updated: Todo[];
+      deleted: number[];
+      reorderedCount: number;
+    }>
+  ) => {
+    state.localDiffs = action.payload;
+  },
   setDraggedTodo: (state: TodoState, action: PayloadAction<Todo | null>) => {
     state.draggedTodo = action.payload;
   },
@@ -22,8 +31,6 @@ export const reducers = {
       const [removed] = state.todos.splice(fromIndex, 1);
       if (removed) {
         state.todos.splice(toIndex, 0, removed);
-        saveToLocalStorage(state);
-        recalculateLocalDiffs(state);
       }
     }
   },
@@ -38,7 +45,6 @@ export const reducers = {
   },
   setLastSyncTime: (state: TodoState, action: PayloadAction<number | null>) => {
     state.lastSyncTime = action.payload;
-    saveToLocalStorage(state);
   },
   appendTodos: (
     state: TodoState,
@@ -70,14 +76,11 @@ export const reducers = {
     state.hasMoreTodos = state.todos.length < total;
     state.lastFetchedPage = page;
     state.lastSyncTime = Date.now();
-    saveToLocalStorage(state);
   },
   addTodo: (state: TodoState, action: PayloadAction<Todo>) => {
     const newTodo = action.payload;
     state.todos.unshift(newTodo);
     state.totalTodos += 1;
-    recalculateLocalDiffs(state);
-    saveToLocalStorage(state);
   },
   updateTodo: (
     state: TodoState,
@@ -89,8 +92,6 @@ export const reducers = {
     if (todoIndex !== -1) {
       const originalTodo = state.todos[todoIndex];
       state.todos[todoIndex] = { ...originalTodo, ...updates } as Todo;
-      recalculateLocalDiffs(state);
-      saveToLocalStorage(state);
     }
   },
   deleteTodo: (state: TodoState, action: PayloadAction<number>) => {
@@ -100,8 +101,6 @@ export const reducers = {
     if (todoIndex !== -1) {
       state.todos.splice(todoIndex, 1);
       state.totalTodos -= 1;
-      recalculateLocalDiffs(state);
-      saveToLocalStorage(state);
     }
   },
   clearLocalDiffs: (state: TodoState) => {
@@ -111,7 +110,6 @@ export const reducers = {
       deleted: [],
       reorderedCount: 0,
     };
-    saveToLocalStorage(state);
   },
   resetTodos: (state: TodoState) => {
     state.todos = [];
@@ -125,16 +123,12 @@ export const reducers = {
       deleted: [],
       reorderedCount: 0,
     };
-    saveToLocalStorage(state);
   },
   setHasMoreTodos: (state: TodoState, action: PayloadAction<boolean>) => {
     state.hasMoreTodos = action.payload;
-    saveToLocalStorage(state);
   },
   setTodos: (state: TodoState, action: PayloadAction<Todo[]>) => {
     state.todos = action.payload;
-    recalculateLocalDiffs(state);
-    saveToLocalStorage(state);
   },
   replaceTodo: (
     state: TodoState,
@@ -145,7 +139,5 @@ export const reducers = {
     if (index !== -1) {
       state.todos[index] = { ...newTodo } as Todo;
     }
-    recalculateLocalDiffs(state);
-    saveToLocalStorage(state);
   },
 };
